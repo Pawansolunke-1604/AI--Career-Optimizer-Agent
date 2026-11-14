@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     temperature: float = 0.0
     log_level: str = "INFO"
     max_upload_mb: int = 5
+    max_chat_messages: int = 30
     fallback_model_name: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")

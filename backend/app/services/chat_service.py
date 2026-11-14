@@ -8,6 +8,9 @@ from app.core.exceptions import LLMError, SessionNotFoundError
 from app.schemas.chat import ChatResponse
 from app.services.resume_service import render_markdown
 from app.services.session_service import AnalysisSession, session_store
+from app.core.config import get_settings
+from app.core.exceptions import ChatLimitError, LLMError, SessionNotFoundError
+from app.services import guardrails
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +23,7 @@ def summarize_turn(messages: list) -> tuple[str, list[str]]:
     tools_used: list[str] = []
     for m in messages[last_human + 1:]:
         if isinstance(m, AIMessage):
-               tools_used.extend(call["name"].replace(".", ":").split(":")[-1] for call in m.tool_calls)
+            tools_used.extend(call["name"].replace(".", ":").split(":")[-1] for call in m.tool_calls)
             
 
     reply = ""
@@ -55,4 +58,8 @@ async def chat(session_id: str, message: str) -> ChatResponse:
     session = session_store.get(session_id)
     if session is None:
         raise SessionNotFoundError("This analysis session has expired. Please analyze your resume again.")
+    if len(session.user_messages) >= get_settings().max_chat_messages:
+        raise ChatLimitError("You have reached the message limit for this session. "
+                             "Please analyze your resume again to start a new one.")
+    message = guardrails.check_chat_message(message)
     return await run_in_threadpool(chat_with_session, session, message)

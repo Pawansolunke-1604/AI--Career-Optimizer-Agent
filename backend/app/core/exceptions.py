@@ -1,4 +1,3 @@
-# TODO: core/exceptions.py
 class AppError(Exception):
     status_code = 400
 
@@ -18,14 +17,30 @@ class FileTooLargeError(AppError):
 class EmptyDocumentError(AppError):
     status_code = 422
 
+
 class CorruptFileError(AppError):
     status_code = 422
+
 
 class LLMError(AppError):
     status_code = 502
 
+
 class SessionNotFoundError(AppError):
     status_code = 404
 
+
 class ResumeNotGeneratedError(AppError):
     status_code = 404
+
+
+class InputRejectedError(AppError):
+    status_code = 422
+
+
+class RateLimitError(AppError):
+    status_code = 429
+
+
+class ChatLimitError(AppError):
+    status_code = 429
