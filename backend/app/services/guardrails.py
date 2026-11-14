@@ -19,7 +19,7 @@ _I = re.I
 INJECTION_PATTERNS = [re.compile(p, _I) for p in (
     r"ignore (all |any |the )?(previous|prior|above|earlier|your) (instructions|prompts?|rules)",
     r"disregard (all |any |the )?(previous|prior|above|earlier|your) (instructions|prompts?|rules)",
-    r"forget (all |everything |your )?(previous |prior )?(instructions|rules)",
+    r"forget (all |everything |any |your |the |previous |prior )*(instructions|rules)",
     r"(reveal|show|print|repeat|tell me) (me )?(your|the) (system |hidden |initial )?(prompt|instructions)",
     r"you are now (a|an|the|in)\b",
     r"act as (a|an|the) (ai|assistant|llm|chatbot|different|unrestricted)",
