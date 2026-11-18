@@ -12,6 +12,12 @@ MIN_JD_CHARS, MAX_JD_CHARS = 100, 20_000
 
 RESUME_HINTS = ("experience", "education", "skills", "projects", "summary", "objective",
                 "certification", "internship", "work history", "profile")
+# Weaker signals: used only together with a contact detail, for resumes with creative section names.
+SOFT_HINTS = ("university", "college", "institute", "bachelor", "master", "degree", "b.e", "b.tech",
+              "b.sc", "m.sc", "mba", "developer", "engineer", "analyst", "intern", "worked", "tools",
+              "technologies", "languages", "frameworks", "achievement")
+EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+PHONE = re.compile(r"\+?\d[\d\s().-]{8,}\d")
 JD_HINTS = ("responsibilit", "requirement", "qualification", "skills", "experience", "role",
             "position", "we are looking", "preferred", "must have", "apply", "job", "candidate")
 
@@ -49,6 +55,13 @@ def _hints(text: str, hints: tuple[str, ...]) -> int:
     low = text.lower()
     return sum(h in low for h in hints)
 
+def _looks_like_resume(text: str) -> bool:
+    strong = _hints(text, RESUME_HINTS)
+    if strong >= 2:
+        return True
+    has_contact = bool(EMAIL.search(text) or PHONE.search(text))
+    return has_contact and strong + _hints(text, SOFT_HINTS) >= 2
+
 
 def validate_resume_text(text: str) -> None:
     n = len(text.strip())
@@ -57,7 +70,7 @@ def validate_resume_text(text: str) -> None:
                                  "image, please upload a text-based PDF or DOCX.")
     if n > MAX_RESUME_CHARS:
         raise InputRejectedError("This document is too long to be a resume.")
-    if _hints(text, RESUME_HINTS) < 2:
+    if not _looks_like_resume(text):
         raise InputRejectedError("This doesn't look like a resume (no sections like skills, "
                                  "experience or education were found).")
 

@@ -135,11 +135,27 @@ _RECIPE = ("Classic Tomato Pasta. Boil two cups of pasta in salted water for ten
            "Season with salt, pepper and fresh basil. Drain the pasta, mix it with the sauce, top with "
            "grated cheese and serve hot. Serves two people.")
 _R = RESUMES["java_fresher"]["text"]
+_CREATIVE = """Hi, I'm Karan Desai
+Backend developer | karan.d@example.com | Nashik
+Hello there
+Junior backend developer with two years of hands-on work building APIs in Python and FastAPI, backed by PostgreSQL.
+My toolbox
+Python FastAPI PostgreSQL Docker Git Redis Linux
+Where I've worked
+Backend Developer, Orbit Systems (2023 - 2025)
+Built FastAPI services used by 3 internal teams
+Where I studied
+B.Sc. Computer Science, Example University, 2023
+"""
+_SPAM = "Buy cheap shoes online today! Best prices guaranteed. " * 6 + "Write to sales@example.com"
+
 
 # (name, kind, text, expected)   expected: accept | reject | removed:N (lines removed from a document)
 GUARDRAIL_CASES = [
     ("real resume accepted", "resume", _R, "accept"),
     ("recipe uploaded as resume", "resume", _RECIPE, "reject"),
+    ("creative resume, unusual headings", "resume", _CREATIVE, "accept"),
+    ("spam text with an email address", "resume", _SPAM, "reject"),
     ("one-line file as resume", "resume", "Pawan Solunke - Java Developer", "reject"),
     ("real job description accepted", "jd", JDS["java_jd"]["text"], "accept"),
     ("recipe pasted as job description", "jd", _RECIPE, "reject"),
